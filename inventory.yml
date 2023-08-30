@@ -1,4 +1,4 @@
-test-host:
+development:
   hosts:
     ubuntu-dev.goslin.net:
 controllers:
