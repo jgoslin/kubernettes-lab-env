@@ -1,13 +1,9 @@
-development:
+test:
   hosts:
     ubuntu-dev.goslin.net:
-controllers:
+proxmox:
   hosts:
-    foo.example.com:
-    bar.example.com:
-nodes:
+    pve1.goslin.net:
+template:
   hosts:
-    one.example.com:
-    two.example.com:
-    three.example.com:
-
+    k8s-template.goslin.net:
