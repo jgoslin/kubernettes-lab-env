@@ -1,0 +1,13 @@
+test-host:
+  hosts:
+    ubuntu-dev.goslin.net:
+controllers:
+  hosts:
+    foo.example.com:
+    bar.example.com:
+nodes:
+  hosts:
+    one.example.com:
+    two.example.com:
+    three.example.com:
+
