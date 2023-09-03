@@ -1,0 +1,82 @@
+---
+- name: Download cloud-image for Ubuntu Server 22.04, configure and deploy VM form image
+  hosts: proxmox
+  become: true
+
+  tasks:
+    - name: Download cloud image
+      ansible.builtin.get_url:
+        url: https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img
+        dest: /tmp/jammy-server-cloudimg-amd64.img
+        force: true
+        mode: 660
+      register: results
+    - name: Print debug output
+      ansible.builtin.debug:
+        var: results.stdout_lines
+    - name: Install qemu-guest-agent in jammy-server-cloudimg-amd64.img
+      ansible.builtin.command: sudo virt-customize -a /tmp/jammy-server-cloudimg-amd64.img --install qemu-guest-agent
+      register: results
+    - name: Print debug output
+      ansible.builtin.debug:
+        var: results.stdout_lines
+    - name: Resize image
+      ansible.builtin.command: qemu-img resize /tmp/jammy-server-cloudimg-amd64.img 32G
+      register: results
+    - name: Print debug output
+      ansible.builtin.debug:
+        var: results.stdout_lines
+    - name: Create VM
+      ansible.builtin.command: qm create 9000 -name ubuntu-2204.goslin.net -agent 1
+    - name: Print debug output
+      ansible.builtin.debug:
+        var: results.stdout_lines
+    - name: Configure CPU, Memory
+      ansible.builtin.command: qm set 9000 -memory 4096 -cores 4 -sockets 1 -cpu x86-64-v2-AES
+      register: results
+    - name: Print debug output
+      ansible.builtin.debug:
+        var: results.stdout_lines
+    - name: Configure Display
+      ansible.builtin.command: qm set 9000 -serial0 socket -vga serial0
+      register: results
+    - name: Print debug output
+      ansible.builtin.debug:
+        var: results.stdout_lines
+    - name: Network and Storage Hardware
+      ansible.builtin.command: qm set 9000 -net0 virtio,bridge=vmbr0 -scsihw virtio-scsi-single -ide2 truenas-nfs:cloudinit
+      register: results
+    - name: Print debug output
+      ansible.builtin.debug:
+        var: results.stdout_lines
+    - name: Attach downloaded image to VM
+      ansible.builtin.command: qm importdisk 9000 /tmp/jammy-server-cloudimg-amd64.qcow2 truenas-nfs
+      register: results
+    - name: Print debug output
+      ansible.builtin.debug:
+        var: results.stdout_lines
+    - name: Configure disk and set boot
+      ansible.builtin.command: sudo qm set 9000 -scsi0 truenas-nfs:9000/vm-9000-disk-0.raw,ssd=1,discard=on,iothread=1 -boot c -bootdisk scsi0
+      register: results
+    - name: Print debug output
+      ansible.builtin.debug:
+        var: results.stdout_lines
+    - name: Configure cloud-init
+      ansible.builtin.command: sudo qm set 9000 -citype nocloud -ciuser ansible
+      register: results
+    - name: Print debug output
+      ansible.builtin.debug:
+        var: results.stdout_lines
+    - name: Configure sshkeys
+      ansible.builtin.command: sudo qm set 9000 -sshkeys /home/ansible/.ssh/authorized_keys
+      register: results
+    - name: Print debug output
+      ansible.builtin.debug:
+        var: results.stdout_lines
+    - name: Configure Network
+      ansible.builtin.command: sudo qm set 9000 -nameserver 192.168.136.1 -searchdomain goslin.net -ipconfig0 ip=dhcp 
+      register: results
+    - name: Print debug output
+      ansible.builtin.debug:
+        var: results.stdout_lines
+

@@ -1,6 +1,6 @@
-test:
+k8stemplate:
   hosts:
-    ubuntu-dev.goslin.net:
+    k8s-template.goslin.net:
 proxmox:
   hosts:
     pve1.goslin.net:
