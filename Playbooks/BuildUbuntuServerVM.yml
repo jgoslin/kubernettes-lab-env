@@ -79,4 +79,3 @@
     - name: Print debug output
       ansible.builtin.debug:
         var: results.stdout_lines
-
