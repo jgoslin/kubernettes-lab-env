@@ -1,6 +1,6 @@
 ---
 - name: Install apt packages
-  hosts: k8stemplate
+  hosts: k8smasters
   become: true
   tasks:
     - name: Disable Swap file in /etc/fstab
@@ -34,7 +34,7 @@
     - name: Install Kubernetes packages
       ansible.builtin.apt:
         update_cache: true
-        name: 
+        name:
           - gnupg2
           - software-properties-common
           - apt-transport-https
@@ -43,4 +43,5 @@
           - kubelet
           - kubeadm
           - kubectl
+          - nfs-common
         state: present

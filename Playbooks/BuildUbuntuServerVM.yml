@@ -15,7 +15,7 @@
       ansible.builtin.debug:
         var: results.stdout_lines
     - name: Install qemu-guest-agent in jammy-server-cloudimg-amd64.img
-      ansible.builtin.command: sudo virt-customize -a /tmp/jammy-server-cloudimg-amd64.img --install qemu-guest-agent
+      ansible.builtin.command: virt-customize -a /tmp/jammy-server-cloudimg-amd64.img --install 'qemu-guest-agent','sudo'
       register: results
     - name: Print debug output
       ansible.builtin.debug:
@@ -27,7 +27,7 @@
       ansible.builtin.debug:
         var: results.stdout_lines
     - name: Create VM
-      ansible.builtin.command: qm create 9000 -name ubuntu-2204.goslin.net -agent 1
+      ansible.builtin.command: qm create 9000 -name ubuntu-s-2204 -agent 1
     - name: Print debug output
       ansible.builtin.debug:
         var: results.stdout_lines
@@ -50,31 +50,31 @@
       ansible.builtin.debug:
         var: results.stdout_lines
     - name: Attach downloaded image to VM
-      ansible.builtin.command: qm importdisk 9000 /tmp/jammy-server-cloudimg-amd64.qcow2 truenas-nfs
+      ansible.builtin.command: qm importdisk 9000 /tmp/jammy-server-cloudimg-amd64.img truenas-nfs
       register: results
     - name: Print debug output
       ansible.builtin.debug:
         var: results.stdout_lines
     - name: Configure disk and set boot
-      ansible.builtin.command: sudo qm set 9000 -scsi0 truenas-nfs:9000/vm-9000-disk-0.raw,ssd=1,discard=on,iothread=1 -boot c -bootdisk scsi0
+      ansible.builtin.command: qm set 9000 -scsi0 truenas-nfs:9000/vm-9000-disk-0.raw,ssd=1,discard=on,iothread=1 -boot c -bootdisk scsi0
       register: results
     - name: Print debug output
       ansible.builtin.debug:
         var: results.stdout_lines
     - name: Configure cloud-init
-      ansible.builtin.command: sudo qm set 9000 -citype nocloud -ciuser ansible
+      ansible.builtin.command: qm set 9000 -citype nocloud -ciuser ansible
       register: results
     - name: Print debug output
       ansible.builtin.debug:
         var: results.stdout_lines
     - name: Configure sshkeys
-      ansible.builtin.command: sudo qm set 9000 -sshkeys /home/ansible/.ssh/authorized_keys
+      ansible.builtin.command: qm set 9000 -sshkeys /home/ansible/.ssh/authorized_keys
       register: results
     - name: Print debug output
       ansible.builtin.debug:
         var: results.stdout_lines
     - name: Configure Network
-      ansible.builtin.command: sudo qm set 9000 -nameserver 192.168.136.1 -searchdomain goslin.net -ipconfig0 ip=dhcp 
+      ansible.builtin.command: qm set 9000 -ipconfig0 ip=dhcp 
       register: results
     - name: Print debug output
       ansible.builtin.debug:
