@@ -1,0 +1,9 @@
+proxmox:
+  hosts:
+    pve1.home.goslin.us:
+ubuntu_template:
+  hosts:
+    ubuntu-s-2204.home.goslin.us:
+k8s-template:
+  hosts:
+    k8s-template.home.goslin.us:

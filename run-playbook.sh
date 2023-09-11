@@ -12,4 +12,4 @@ playbook=$1
 
 # Execute the command with the argument
 echo "Executing playbook: $arg1"
-ansible-playbook -i inventory.yml $playbook --private-key ~/.ssh/ansible -u ansible --become-password-file .become 
+ansible-playbook -i ansible\inventory.yml ansible\BuildUbuntuServerVM.yml --private-key ~/.ssh/ansible -u ansible --become-password-file .become 
