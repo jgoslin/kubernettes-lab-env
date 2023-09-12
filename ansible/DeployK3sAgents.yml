@@ -1,0 +1,13 @@
+---
+- name: Deploy K3s HA Cluster
+  hosts: k3s-agents
+  become: true
+
+  tasks:
+# ---------------- Install K3s - Agent Nodes ---------------------------------------
+    - name: Install k3s Agent
+      ansible.builtin.shell: curl -sfL https://get.k3s.io | K3S_TOKEN='Gr33nGr@ss!!' sh -s - agent --server https://192.168.136.230:6443
+      register: result
+    - name: Print return information from the previous task
+      ansible.builtin.debug:
+        var: result

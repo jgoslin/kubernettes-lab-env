@@ -1,0 +1,41 @@
+---
+- name: Deploy K3s HA Cluster
+  hosts: k3s-controlers
+  become: true
+
+  tasks:
+  # ----------------- Setup Load Blancer for Controlers -----------------------------
+    - name: Install Keepalived
+      ansible.builtin.apt:
+        pkg:
+          - keepalived
+          - curl
+        state: present
+    - name: Copy keepalived config
+      ansible.builtin.copy:
+        src: "{{ inventory_hostname }}_keepalived.conf"
+        dest: "/etc/keepalived/keepalived.conf"
+        mode: '0644'
+    - name: Restart Keepalived
+      ansible.builtin.systemd:
+        state: restarted
+        name: keepalived
+        enabled: true
+
+# ---------------- Install K3s - Master Nodes ---------------------------------------
+    - name: Install k3s on first node
+      ansible.builtin.shell: curl -sfL https://get.k3s.io | K3S_TOKEN='Gr33nGr@ss!!' sh -s - server --cluster-init --tls-san=192.168.136.230
+      when: inventory_hostname == 'k3s-ctrl1'
+      register: result
+    - name: Print return information from the previous task
+      ansible.builtin.debug:
+        var: result
+    - name: Pause for 30 seconds to waitfor install to complete
+      ansible.builtin.pause:
+        seconds: 30
+    - name: Install k3s on first node
+      ansible.builtin.shell: curl -sfL https://get.k3s.io | K3S_TOKEN='Gr33nGr@ss!!' sh -s - server --server https://192.168.136.230:6443 --tls-san=192.168.136.230
+      when: inventory_hostname != 'k3s-ctrl1' 
+    - name: Print return information from the previous task
+      ansible.builtin.debug:
+        var: result

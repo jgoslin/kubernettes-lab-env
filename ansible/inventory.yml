@@ -4,6 +4,13 @@ proxmox:
 ubuntu_template:
   hosts:
     ubuntu-s-2204.home.goslin.us:
-k8s-template:
+k3s-controlers:
   hosts:
-    k8s-template.home.goslin.us:
+    k3s-ctrl1:
+    k3s-ctrl2:
+    k3s-ctrl3:
+k3s-agents:
+  hosts:
+    k3s-node1:
+    k3s-node2:
+    k3s-node3:
