@@ -35,7 +35,7 @@
         seconds: 30
     - name: Install k3s on first node
       ansible.builtin.shell: curl -sfL https://get.k3s.io | K3S_TOKEN='Gr33nGr@ss!!' sh -s - server --server https://192.168.136.230:6443 --tls-san=192.168.136.230
-      when: inventory_hostname != 'k3s-ctrl1' 
+      when: inventory_hostname != 'k3s-ctrl1'
     - name: Print return information from the previous task
       ansible.builtin.debug:
         var: result
