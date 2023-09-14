@@ -14,3 +14,5 @@ k3s-agents:
     k3s-node1:
     k3s-node2:
     k3s-node3:
+    k3s-store1:
+    k3s-store2:
